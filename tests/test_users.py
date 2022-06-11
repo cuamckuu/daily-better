@@ -1,16 +1,16 @@
 import sys
-
-import pytest
 import uuid
 
+import pytest
+
 sys.path.append('.')
+sys.path.append('..')
 
-from app.database import User, get_test_db, get_user_by_token, get_user_by_username, update_user_token
+from app.database import get_test_db
+from app.users.crud import (get_user_by_token, get_user_by_username,
+                            update_user_token)
+from app.users.models import User
 
-# TODO:
-# - [x] Test get user by token
-# - [x] Test update token
-# - [x] Test that token is unique
 
 def test_create_user():
     for db in get_test_db():
