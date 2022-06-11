@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Field, Session, SQLModel, UniqueConstraint, create_engine, select
 
 from app.settings import DB_URL
 
@@ -22,6 +22,8 @@ def get_db(is_test=False) -> Session:
 
 class User(SQLModel, table=True):
     """Class to represent bookmarks owners."""
+
+    __table_args__ = (UniqueConstraint('username'),)
 
     id: Optional[int] = Field(default=None, primary_key=True)
     username: str
