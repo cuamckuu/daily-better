@@ -1,5 +1,3 @@
-"""Module to work with users endpoint."""
-
 import hashlib
 import secrets
 import uuid
@@ -9,9 +7,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlmodel import Session
 
-from app.database import (User, get_db, get_user_by_token,
-                          get_user_by_username, update_user_token)
+from app.database import get_db
 from app.settings import PASSWORD_SALT
+from app.users.crud import get_user_by_username, update_user_token
+from app.users.models import User
 
 # TODO:
 # - [X] Вынести всю логику логина в отдельный blueprint
@@ -19,7 +18,7 @@ from app.settings import PASSWORD_SALT
 # - [ ] Endpoint /logout
 # - [ ] Регистрация
 # - [ ] Тесты эндпоинтов
-# - [ ] Вынести все Depends в dependencies.py
+# - [X] Вынести все Depends в dependencies.py
 
 
 router = APIRouter()
@@ -61,11 +60,7 @@ async def login_for_access_token(
     return {'access_token': access_token, 'token_type': 'bearer'}
 
 
-def get_current_user(
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    return get_user_by_token(db, token)
+from app.users.dependencies import get_current_user
 
 
 @router.get('/users/me')
