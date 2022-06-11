@@ -2,21 +2,32 @@
 
 from typing import Optional
 
-from sqlmodel import Field, Session, SQLModel, UniqueConstraint, create_engine, select
+from sqlmodel import (Field, Session, SQLModel, UniqueConstraint,
+                      create_engine, select)
+from sqlmodel.pool import StaticPool
 
 from app.settings import DB_URL
 
-engine = create_engine(DB_URL)
+engine = create_engine(DB_URL, connect_args={'check_same_thread': False})
 
 
-def get_db(is_test=False) -> Session:
-    """Return db session from sqlmodel."""
-    _engine = engine
-    if is_test:
-        _engine = create_engine('sqlite:///:memory:')
+def get_test_db() -> Session:
+    """Return test db session from sqlmodel."""
+    _engine = create_engine(
+        'sqlite:///:memory:',
+        connect_args={'check_same_thread': False},
+        poolclass=StaticPool,
+    )
 
     SQLModel.metadata.create_all(_engine)
     with Session(_engine) as sess:
+        yield sess
+
+
+def get_db() -> Session:
+    """Return db session from sqlmodel."""
+    SQLModel.metadata.create_all(engine)
+    with Session(engine) as sess:
         yield sess
 
 
