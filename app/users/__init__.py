@@ -1,1 +1,1 @@
-"""Module to work with users endpoint."""
+"""Module to work with users."""
