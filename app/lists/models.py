@@ -1,12 +1,13 @@
+import sys
 from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
-from app.bookmarks.models import Bookmark
 
-from app.users.models import User
+sys.path.append('.')
+sys.path.append('..')
 
 
-class List(SQLModel, table=True):
+class BookmarkList(SQLModel, table=True):
     """Class to represent bookmarks lists."""
 
     __table_args__ = (
@@ -15,7 +16,7 @@ class List(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
-    user: Optional[User] = Relationship(back_populates="lists")
-    bookmarks: Bookmark["bookmarks"] = Relationship(back_populates="list")
+    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    user: Optional["User"] = Relationship(back_populates="lists")
     
 
