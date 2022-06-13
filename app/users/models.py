@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import  Optional
 
-from sqlmodel import Field, SQLModel, UniqueConstraint
+from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
+
+from app.lists.models import List
 
 
 class User(SQLModel, table=True):
@@ -15,4 +17,6 @@ class User(SQLModel, table=True):
     username: str
     password_hash: str
     token: Optional[str] = None
+
+    lists: List["lists"] = Relationship(back_populates="user")
 
