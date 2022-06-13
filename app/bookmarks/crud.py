@@ -2,11 +2,11 @@
 
 from sqlmodel import Session, select
 
-from app.bookmarks.models import Bookmark, Tag
+from app.bookmarks.models import BookmarkDb, TagDb
 
 
-def get_or_create_tag(db: Session, tag: Tag):
-    _tag = db.exec(select(Tag).where(Tag.name == tag.name)).first()
+def get_or_create_tag(db: Session, tag: TagDb) -> TagDb:
+    _tag = db.exec(select(TagDb).where(TagDb.name == tag.name)).first()
     if _tag:
         return _tag
 
@@ -17,7 +17,7 @@ def get_or_create_tag(db: Session, tag: Tag):
     return tag
 
 
-def create_bookmark(db: Session, bookmark: Bookmark):
+def create_bookmark(db: Session, bookmark: BookmarkDb) -> BookmarkDb:
     db.add(bookmark)
     db.commit()
     db.refresh(bookmark)

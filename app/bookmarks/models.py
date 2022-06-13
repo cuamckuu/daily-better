@@ -10,14 +10,13 @@ UTC_TZ = datetime.timezone.utc
 
 
 class BookmarkToTag(SQLModel, table=True):
-    bookmark_id: int = Field(foreign_key='bookmark.id', primary_key=True)
-    tag_id: int = Field(foreign_key='tag.id', primary_key=True)
+    bookmark_id: int = Field(foreign_key='bookmarkdb.id', primary_key=True)
+    tag_id: int = Field(foreign_key='tagdb.id', primary_key=True)
 
 
-class Bookmark(SQLModel, table=True):
+class Bookmark(SQLModel):
     """Class to represent bookmark."""
 
-    id: Optional[int] = Field(default=None, primary_key=True)
     created: datetime.datetime = Field(
         # XXX: tzinfo is ignored somewhy
         default_factory=lambda: datetime.datetime.now(tz=UTC_TZ),
@@ -30,21 +29,38 @@ class Bookmark(SQLModel, table=True):
     was_read: bool = False
     status: str = 'UNPROCESSED'
 
-    tags: List['Tag'] = Relationship(
+
+class BookmarkDb(Bookmark, table=True):
+    """Class to represent bookmark in database."""
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+    tags: List['TagDb'] = Relationship(
         back_populates='bookmarks',
         link_model=BookmarkToTag,
     )
 
 
-class Tag(SQLModel, table=True):
+class BookmarkCreate(Bookmark):
+    """Class to create bookmark from fastapi endpoint."""
+
+    tags: List[str] = []
+
+
+class Tag(SQLModel):
     """Class to represent bookmark's tag."""
+
+    name: str
+
+
+class TagDb(Tag, table=True):
+    """Class to represent bookmark's tag in database."""
 
     __table_args__ = (UniqueConstraint('name'),)
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    name: str
 
-    bookmarks: List[Bookmark] = Relationship(
+    bookmarks: List[BookmarkDb] = Relationship(
         back_populates='tags',
         link_model=BookmarkToTag,
     )
