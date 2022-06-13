@@ -8,10 +8,10 @@ from app.settings import DB_URL
 engine = create_engine(DB_URL, connect_args={'check_same_thread': False})
 
 
-def get_test_db() -> Session:
+def get_test_db(name=':memory:') -> Session:
     """Return test db session from sqlmodel."""
     _engine = create_engine(
-        'sqlite:///:memory:',
+        f'sqlite:///{name}',
         connect_args={'check_same_thread': False},
         poolclass=StaticPool,
     )

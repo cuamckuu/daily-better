@@ -1,4 +1,6 @@
-from typing import  Optional
+"""Module to work with User related models."""
+
+from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
 

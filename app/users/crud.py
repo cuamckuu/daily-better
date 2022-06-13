@@ -1,3 +1,4 @@
+"""Module to work with users database."""
 
 from typing import Optional
 
@@ -19,6 +20,7 @@ def get_user_by_token(db: Session, token: str) -> Optional[User]:
 
 
 def update_user_token(db: Session, user: User, new_token: str):
+    """Update user token in db and refresh instance."""
     user.token = new_token
     db.add(user)
     db.commit()
