@@ -1,36 +1,41 @@
-
-from typing import Optional
+from typing import List, Optional
+from requests import session
 
 from sqlmodel import Session, select
 
-from app.lists.models import List
-from app.users.models import User
-'''
-[ ] GET /api/v1/users/{id}/lists - Получить публичные списки заданного пользователя
-[ ] GET /api/v1/lists/{id} - Получить список по ID (имя, свойства и входящие закладки)
-[ ] POST /api/v1/lists {json} - Создать новый список
-[ ] PUT /api/v1/lists/{id} - Обновить существующий список
-[ ] DELETE /api/v1/lists/{id} - Удалить список
-'''
-'''
-def get_user_by_username(db: Session, username: str) -> Optional[User]:
-    """Return User from db by unique username."""
-    statement = select(User).where(User.username == username)
+from app.lists.models import BookmarkList
+
+
+def get_user_lists(db: Session, user_id: int) -> List[Optional[BookmarkList]]:
+    """Return Lists of User from db by user id"""
+    statement = select(BookmarkList).where(BookmarkList.user_id == user_id)
+    return db.exec(statement).all()
+
+
+def get_list_by_id(db: Session, id: int) -> Optional[BookmarkList]:
+    """Return List from db by id"""
+    statement = select(BookmarkList).where(BookmarkList.id == id)
     return db.exec(statement).first()
 
 
-def get_user_by_token(db: Session, token: str) -> Optional[User]:
-    """Return User from db by unique token."""
-    statement = select(User).where(User.token == token)
-    return db.exec(statement).first()
-
-
-def update_user_token(db: Session, user: User, new_token: str):
-    user.token = new_token
-    db.add(user)
+def create_list(db: Session, list: BookmarkList):
+    """Create new list in db"""
+    db.add(list)
     db.commit()
-    db.refresh(user)
-'''
 
-def get_user_lists(db: Session, user: User) -> Optional[List]:
-    return None
+
+def update_list_by_id(db: Session, id: int, name: str):
+    """Update list by id"""
+    statement = select(BookmarkList).where(BookmarkList.id == id)
+    list_to_update = db.exec(statement).first()
+    list_to_update.name = name
+    db.add(list_to_update)
+    db.commit()
+    db.refresh(list_to_update)
+
+
+def delete_list_by_id(db: Session, id: int):
+    """Delete list in db by id"""
+    statement = select(BookmarkList).where(BookmarkList.id == id)
+    list_to_delete = db.exec(statement).first()
+    db.delete(list_to_delete)
