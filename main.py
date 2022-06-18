@@ -3,8 +3,8 @@
 import uvicorn
 from fastapi import FastAPI
 
-from app.users.routes import router as users_router
 from app.bookmarks.routes import router as bookmarks_router
+from app.users.routes import router as users_router
 
 app = FastAPI()
 

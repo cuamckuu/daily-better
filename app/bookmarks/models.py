@@ -28,6 +28,7 @@ class Bookmark(SQLModel):
     description: Optional[str]
     was_read: bool = False
     status: str = 'UNPROCESSED'
+    list_id: Optional[int] = Field(default=None, foreign_key='list.id')
 
 
 class BookmarkDb(Bookmark, table=True):
@@ -35,6 +36,9 @@ class BookmarkDb(Bookmark, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
 
+    bookmarks_list: Optional['BookmarksList'] = (
+        Relationship(back_populates='bookmark')
+    )
     tags: List['TagDb'] = Relationship(
         back_populates='bookmarks',
         link_model=BookmarkToTag,
