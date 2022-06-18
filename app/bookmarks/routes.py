@@ -1,15 +1,15 @@
 """Module with fastapi routes related to bookmarks."""
 
 from typing import List
+
 from fastapi import APIRouter, Depends
-from sqlmodel import Session, select
 from sqlalchemy.orm import joinedload
+from sqlmodel import Session, select
+
 from app.bookmarks.crud import create_bookmark, get_or_create_tag
-from app.bookmarks.models import Bookmark, BookmarkCreate, BookmarkDb, BookmarkToTag, Tag, TagDb
-
-
+from app.bookmarks.models import (Bookmark, BookmarkCreate, BookmarkDb, Tag,
+                                  TagDb)
 from app.database import get_db
-
 
 router = APIRouter()
 
@@ -36,6 +36,11 @@ class Resp(Bookmark):
 
 @router.get('/bookmarks', response_model=List[Resp])
 def read_bookmark_endpoint(*, db: Session = Depends(get_db)):
-    res = db.exec(select(BookmarkDb).options(joinedload(BookmarkDb.tags))).unique().all()
+    res = (
+        db
+        .exec(select(BookmarkDb).options(joinedload(BookmarkDb.tags)))
+        .unique()
+        .all()
+    )
 
     return res

@@ -6,7 +6,9 @@ sys.path.append('.')
 sys.path.append('..')
 
 from sqlmodel import Field, Relationship, SQLModel, UniqueConstraint
+
 from app.lists.models import BookmarkList
+
 
 class User(SQLModel, table=True):
     """Class to represent bookmarks owners."""
@@ -20,5 +22,5 @@ class User(SQLModel, table=True):
     username: str
     password_hash: str
     token: Optional[str] = None
-    lists: List[BookmarkList] = Relationship(back_populates="user")
+    lists: List[BookmarkList] = Relationship(back_populates='user')
 
