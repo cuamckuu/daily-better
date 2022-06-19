@@ -6,6 +6,8 @@ from typing import List, Optional
 from sqlmodel import (Column, DateTime, Field, Relationship, SQLModel,
                       UniqueConstraint)
 
+from app.lists.models import BookmarkList
+
 UTC_TZ = datetime.timezone.utc
 
 
@@ -28,17 +30,15 @@ class Bookmark(SQLModel):
     description: Optional[str]
     was_read: bool = False
     status: str = 'UNPROCESSED'
-    list_id: Optional[int] = Field(default=None, foreign_key='list.id')
 
 
 class BookmarkDb(Bookmark, table=True):
     """Class to represent bookmark in database."""
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    list_id: Optional[int] = Field(default=None, foreign_key='bookmarklist.id')
 
-    bookmarks_list: Optional['BookmarksList'] = (
-        Relationship(back_populates='bookmark')
-    )
+    list: Optional[BookmarkList] = Relationship(back_populates='bookmarks')
     tags: List['TagDb'] = Relationship(
         back_populates='bookmarks',
         link_model=BookmarkToTag,
