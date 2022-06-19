@@ -1,6 +1,7 @@
 import sys
 
 import pytest
+from sqlmodel import select
 
 sys.path.append('.')
 sys.path.append('..')
@@ -15,37 +16,37 @@ from app.users.models import User
 
 def test_create_list():
     for db in get_test_db():
-        assert (get_list_by_id(db, 1) is None)
+        all_lists = db.exec(select(BookmarkList)).all()
+
+        assert len(all_lists) == 0
 
         test_list = BookmarkList(name='List1')
-        get_or_create_list(db, test_list)
+        new_list = get_or_create_list(db, test_list)
 
-        assert (get_list_by_id(db, 1) == test_list)
+        assert (get_list_by_id(db, new_list.id) == test_list)
 
 
 def test_update_list():
     for db in get_test_db():
         test_list = BookmarkList(name='List1')
-        db.add(test_list)
-        db.commit()
+        new_list = get_or_create_list(db, test_list)
 
-        assert (get_list_by_id(db, 1).name == 'List1')
-        update_list_by_id(db, 1, 'NewName')
+        assert (get_list_by_id(db, new_list.id) == test_list)
 
-        assert (get_list_by_id(db, 1).name == 'NewName')
+        new_name = 'NewName'
+        update_list_by_id(db, new_list.id, new_name)
+
+        assert (get_list_by_id(db, new_list.id).name == new_name)
 
 
 def test_delete_list():
     for db in get_test_db():
         test_list = BookmarkList(name='List1')
-        db.add(test_list)
-        db.commit()
+        new_list = get_or_create_list(db, test_list)
 
-        assert (get_list_by_id(db, 1) != None)
+        delete_list_by_id(db, new_list.id)
 
-        delete_list_by_id(db, 1)
-
-        assert (get_list_by_id(db, 1) == None)
+        assert (get_list_by_id(db, new_list.id) is None)
 
 
 def test_get_users_lists():
@@ -56,5 +57,4 @@ def test_get_users_lists():
         db.add(test_user)
         db.commit()
 
-        assert (get_user_lists(db, test_user.id)[0] == test_list)
-        assert (get_user_lists(db, test_user.id)[1] == test_list2)
+        assert (get_user_lists(db, test_user.id) == [test_list, test_list2])
