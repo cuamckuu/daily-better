@@ -17,11 +17,26 @@ def get_list_by_id(db: Session, id: int) -> Optional[BookmarkList]:
     return db.exec(statement).first()
 
 
-def create_list(db: Session, bookmark_list: BookmarkList):
-    """Create new list in db"""
+def get_or_create_list(
+    db: Session,
+    bookmark_list: BookmarkList,
+) -> BookmarkList:
+    """Return existing or new bookmark list from db."""
+    _bookmark_list = (
+        db
+        .exec(
+            select(BookmarkList).where(BookmarkList.name == bookmark_list.name)
+        )
+        .first()
+    )
+    if _bookmark_list:
+        return _bookmark_list
+
     db.add(bookmark_list)
     db.commit()
     db.refresh(bookmark_list)
+
+    return bookmark_list
 
 
 def update_list_by_id(db: Session, id: int, name: str):

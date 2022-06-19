@@ -6,8 +6,9 @@ sys.path.append('.')
 sys.path.append('..')
 
 from app.database import get_test_db
-from app.lists.crud import (create_list, delete_list_by_id, get_list_by_id,
-                            get_user_lists, update_list_by_id)
+from app.lists.crud import (delete_list_by_id, get_list_by_id,
+                            get_or_create_list, get_user_lists,
+                            update_list_by_id)
 from app.lists.models import BookmarkList
 from app.users.models import User
 
@@ -15,9 +16,9 @@ from app.users.models import User
 def test_create_list():
     for db in get_test_db():
         assert (get_list_by_id(db, 1) is None)
-        
+
         test_list = BookmarkList(name='List1')
-        create_list(db, test_list)
+        get_or_create_list(db, test_list)
 
         assert (get_list_by_id(db, 1) == test_list)
 
@@ -30,7 +31,7 @@ def test_update_list():
 
         assert (get_list_by_id(db, 1).name == 'List1')
         update_list_by_id(db, 1, 'NewName')
-        
+
         assert (get_list_by_id(db, 1).name == 'NewName')
 
 

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 from app.database import get_db
-from app.lists.crud import create_list, get_list_by_id, get_user_lists
+from app.lists.crud import get_list_by_id, get_or_create_list, get_user_lists
 from app.lists.models import BookmarkList
 
 router = APIRouter()
@@ -26,7 +26,7 @@ def create_bookmarklist_endpoint(
     db: Session = Depends(get_db),
     bookmarklist: BookmarkList,
 ):
-    create_list(db, bookmarklist)
+    get_or_create_list(db, bookmarklist)
 
 
 @router.get('/lists/{list_id}', response_model=Optional[BookmarkList])
