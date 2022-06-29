@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <title>Daily Better</title>
+        <link rel="stylesheet" href="https://unpkg.com/purecss@2.1.0/build/pure-min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=2">
+        <script>
+            const save_bookmark = async function () {
+                const title_tag = document.querySelector('#title');
+                if (!title_tag.checkValidity()) {
+                    return;
+                }
+                const title = title_tag.value;
+
+                const url_tag = document.querySelector('#url');
+                if (!url_tag.checkValidity()) {
+                    return;
+                }
+                const url = url_tag.value;
+
+                const rawResponse = await fetch('/bookmarks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'url': url,
+                        'title': title,
+                        'tags': [],
+                    }),
+                });
+                window.close('','_parent','');
+            }
+        </script>
+    </head>
+
+    <body class="pure-g">
+        <div class="pure-u-1-6"></div>
+        <div class="pure-u-2-3">
+            <h3>Bookmarklet Daily Better</h3>
+
+            <form class="pure-form">
+                <fieldset>
+                    <legend>Название</legend>
+                    <input id="title" required class="pure-input-1" placeholder="Яндекс" value="{{title}}"/>
+                    <br>
+                    <legend>Ссылка</legend>
+                    <input id="url" required class="pure-input-1" placeholder="http://ya.ru" value="{{url}}"/>
+                    <br>
+                    <br>
+                    <a class="pure-button pure-button-primary" onclick="save_bookmark()">Сохранить</a>
+                </fieldset>
+            </form>
+        </div>
+        <div class="pure-u-1-6"></div>
+    </body>
+</html>

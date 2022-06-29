@@ -25,3 +25,21 @@ export DB_URL='sqlite:///temp.db'
 # For production
 export DB_URL='postgresql+psycopg2://postgres:changeme@localhost:5432/postgres'
 ```
+
+
+bookmarklet:
+
+```javascript
+javascript:(function() {
+    const title = encodeURIComponent(document.title);
+    const bookmark_url = encodeURIComponent(window.location.href);
+
+    const api_params = `?title=${title}&url=${bookmark_url}`;
+    const api_url = 'http://localhost:7777/bookmarklet' + api_params;
+
+    const context = '_blank';
+    const window_params = 'width=700, height=400, titlebar=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no';
+
+    const new_window = window.open(api_url, context, window_params);
+})()
+```
