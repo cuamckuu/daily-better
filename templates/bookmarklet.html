@@ -17,15 +17,19 @@
                 }
                 const url = url_tag.value;
 
+                const description_tag = document.querySelector('#description');
+                const description = description_tag.value;
+
                 const rawResponse = await fetch('/bookmarks', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        'url': url,
-                        'title': title,
-                        'tags': [],
+                        "url": url,
+                        "title": title,
+                        "tags": [],
+                        "description": description
                     }),
                 });
                 window.close('','_parent','');
@@ -45,6 +49,9 @@
                     <br>
                     <legend>Ссылка</legend>
                     <input id="url" required class="pure-input-1" placeholder="http://ya.ru" value="{{url}}"/>
+                    <br>
+                    <legend>Описание</legend>
+                    <input id="description" required class="pure-input-1" placeholder="Описание"/>
                     <br>
                     <br>
                     <a class="pure-button pure-button-primary" onclick="save_bookmark()">Сохранить</a>
