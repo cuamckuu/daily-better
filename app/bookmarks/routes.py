@@ -6,8 +6,11 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import joinedload
 from sqlmodel import Session, select
 
-from app.bookmarks.crud import create_bookmark, get_or_create_tag
-from app.bookmarks.models import (Bookmark, BookmarkCreate, BookmarkDb, Tag,
+from app.bookmarks.crud import (create_bookmark, delete_bookmark_with_id,
+                                get_or_create_tag, update_bookmark)
+from app.bookmarks.models import (Bookmark, BookmarkCreate, BookmarkDb,
+                                  BookmarkUpdate,
+                                  Tag,
                                   TagDb)
 from app.database import get_db
 
@@ -44,3 +47,22 @@ def read_bookmark_endpoint(*, db: Session = Depends(get_db)):
     )
 
     return res
+
+
+@router.delete('/bookmarks/{bookmark_id}')
+def delete_bookmark_endpoint(
+    bookmark_id: int,
+    *,
+    db: Session = Depends(get_db),
+):
+    delete_bookmark_with_id(db, bookmark_id)
+
+
+@router.patch('/bookmarks/{bookmark_id}')
+def update_bookmark_endpoint(
+    *,
+    bookmark_id: int,
+    bookmark: BookmarkUpdate,
+    db: Session = Depends(get_db),
+):
+    update_bookmark(db, bookmark_id, bookmark)
