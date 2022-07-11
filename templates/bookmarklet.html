@@ -20,17 +20,30 @@
                 const description_tag = document.querySelector('#description');
                 const description = description_tag.value;
 
-                const rawResponse = await fetch('/bookmarks', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
+                const status_tag = document.querySelector('#status');
+                const status = status_tag.checked;
+
+                data = {
                         "url": url,
                         "title": title,
                         "tags": [],
-                        "description": description
-                    }),
+                        "description": description,
+                        "was_read": status
+                    }
+
+                request = '/bookmarks'
+                request_method = 'POST'
+                if ({{bookmark_id}} != -1) {
+                    request = '/bookmarks/' + {{bookmark_id}}
+                    request_method = 'PATCH'
+                }
+
+                const rawResponse = await fetch(request, {
+                    method: request_method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data),
                 });
                 window.close('','_parent','');
             }
@@ -51,10 +64,17 @@
                     <input id="url" required class="pure-input-1" placeholder="http://ya.ru" value="{{url}}"/>
                     <br>
                     <legend>Описание</legend>
-                    <input id="description" required class="pure-input-1" placeholder="Описание"/>
+                    <input id="description" required class="pure-input-1" placeholder="Описание" value="{{description}}"/>
+                    <br>
+                    <legend>Статус</legend>
+                    <input id="status" type="checkbox" checked="{{was_read}}">Прочитано</input>
+                    <br>
+                    <legend>Теги</legend>
+                    <input id="tags" required class="pure-input-1" placeholder="Теги" value="{{tags}}"/>
                     <br>
                     <br>
-                    <a class="pure-button pure-button-primary" onclick="save_bookmark()">Сохранить</a>
+                    <a id="save_button" class="pure-button pure-button-primary" onclick="save_bookmark()">Сохранить</a>
+                    <a id="delete_button" class="pure-button pure-button-disabled" onclick="delete_bookmark()">Удалить</a>
                 </fieldset>
             </form>
         </div>
