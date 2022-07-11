@@ -28,11 +28,16 @@ def show_bookmarklet(
 ):
     bookmark = get_bookmark_with_url(db, url)
 
-    context = generate_context(bookmark, url, title)
+    context = generate_context(bookmark, url, title, request)
     return templates.TemplateResponse('bookmarklet.html', context)
 
 
-def generate_context(bookmark: BookmarkDb, url: str, title: str):
+def generate_context(
+    bookmark: BookmarkDb,
+    url: str,
+    title: str,
+    request: Request
+):
 
     bookmark_exist = bookmark is not None
 
@@ -41,7 +46,8 @@ def generate_context(bookmark: BookmarkDb, url: str, title: str):
             'title': bookmark.title if bookmark_exist else title,
             'description': bookmark.description if bookmark_exist else'',
             'wasRead': bookmark.was_read if bookmark_exist else False,
-            'bookmark_id': bookmark.id if bookmark_exist else -1
+            'bookmark_id': bookmark.id if bookmark_exist else -1,
+            'request': request
         }
     return context
 
