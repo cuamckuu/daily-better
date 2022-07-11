@@ -1,0 +1,108 @@
+<html>
+    <head>
+        <title>Daily Better</title>
+        <link rel="stylesheet" href="https://unpkg.com/purecss@2.1.0/build/pure-min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=2">
+        <script>
+            const save_bookmark = async function () {
+                const title_tag = document.querySelector('#title');
+                if (!title_tag.checkValidity()) {
+                    return;
+                }
+                const title = title_tag.value;
+
+                const url_tag = document.querySelector('#url');
+                if (!url_tag.checkValidity()) {
+                    return;
+                }
+                const url = url_tag.value;
+
+                const description_tag = document.querySelector('#description');
+                const description = description_tag.value;
+
+                const status_tag = document.querySelector('#status');
+                const status = status_tag.checked;
+
+                data = {
+                        "url": url,
+                        "title": title,
+                        "tags": [],
+                        "description": description,
+                        "was_read": status
+                    }
+
+                request = '/bookmarks'
+                request_method = 'POST'
+                if ({{bookmark_id}} != -1) {
+                    request = '/bookmarks/' + {{bookmark_id}}
+                    request_method = 'PATCH'
+                }
+
+                const rawResponse = await fetch(request, {
+                    method: request_method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data),
+                });
+                window.close('','_parent','');
+            }
+
+            const delete_bookmark = async function () {
+
+                const url_tag = document.querySelector('#url');
+                if (!url_tag.checkValidity()) {
+                    return;
+                }
+                const url = url_tag.value;
+
+                const request = '/bookmarks/' + {{bookmark_id}}
+
+                const rawResponse = await fetch(request, {
+                    method: 'DELETE'
+                });
+                window.close('','_parent','');
+            }
+
+            const contains_bookmark = async function() {
+                if ({{bookmark_id}} != -1) {
+                    const delete_button = document.querySelector('#delete_button');
+                    delete_button.setAttribute('class', 'pure-button pure-button-primary');
+                    const save_button = document.querySelector('#save_button');
+                    save_button.textContent = "Изменить";
+                }
+            }
+        </script>
+    </head>
+
+    <body class="pure-g" onload="contains_bookmark()">
+        <div class="pure-u-1-6"></div>
+        <div class="pure-u-2-3">
+            <h3>Bookmarklet Daily Better</h3>
+
+            <form class="pure-form">
+                <fieldset>
+                    <legend>Название</legend>
+                    <input id="title" required class="pure-input-1" placeholder="Яндекс" value="{{title}}"/>
+                    <br>
+                    <legend>Ссылка</legend>
+                    <input id="url" required class="pure-input-1" placeholder="http://ya.ru" value="{{url}}"/>
+                    <br>
+                    <legend>Описание</legend>
+                    <input id="description" required class="pure-input-1" placeholder="Описание" value="{{description}}"/>
+                    <br>
+                    <legend>Статус</legend>
+                    <input id="status" type="checkbox" checked="{{was_read}}">Прочитано</input>
+                    <br>
+                    <legend>Теги</legend>
+                    <input id="tags" required class="pure-input-1" placeholder="Теги" value="{{tags}}"/>
+                    <br>
+                    <br>
+                    <a id="save_button" class="pure-button pure-button-primary" onclick="save_bookmark()">Сохранить</a>
+                    <a id="delete_button" class="pure-button pure-button-disabled" onclick="delete_bookmark()">Удалить</a>
+                </fieldset>
+            </form>
+        </div>
+        <div class="pure-u-1-6"></div>
+    </body>
+</html>
