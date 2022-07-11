@@ -47,10 +47,35 @@
                 });
                 window.close('','_parent','');
             }
+
+            const delete_bookmark = async function () {
+
+                const url_tag = document.querySelector('#url');
+                if (!url_tag.checkValidity()) {
+                    return;
+                }
+                const url = url_tag.value;
+
+                const request = '/bookmarks/' + {{bookmark_id}}
+
+                const rawResponse = await fetch(request, {
+                    method: 'DELETE'
+                });
+                window.close('','_parent','');
+            }
+
+            const contains_bookmark = async function() {
+                if ({{bookmark_id}} != -1) {
+                    const delete_button = document.querySelector('#delete_button');
+                    delete_button.setAttribute('class', 'pure-button pure-button-primary');
+                    const save_button = document.querySelector('#save_button');
+                    save_button.textContent = "Изменить";
+                }
+            }
         </script>
     </head>
 
-    <body class="pure-g">
+    <body class="pure-g" onload="contains_bookmark()">
         <div class="pure-u-1-6"></div>
         <div class="pure-u-2-3">
             <h3>Bookmarklet Daily Better</h3>
