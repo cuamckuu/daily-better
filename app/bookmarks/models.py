@@ -32,6 +32,16 @@ class Bookmark(SQLModel):
     status: str = 'UNPROCESSED'
 
 
+class BookmarkUpdate(SQLModel):
+    """Class to update bookmark."""
+
+    url: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    was_read: Optional[bool] = None
+    status: Optional[str] = None
+
+
 class BookmarkDb(Bookmark, table=True):
     """Class to represent bookmark in database."""
 
